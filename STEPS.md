@@ -1,10 +1,10 @@
-# Vite + React Setup Guide
+# คู่มือการตั้งค่า Vite + React
 
 ## ขั้นตอนการติดตั้งและใช้งาน
 
 ### 0. สร้างไฟล์ที่จำเป็นก่อน npm install
 
-ก่อนรัน `npm install` ต้องให้ครบถ้วน ไฟล์ที่จำเป็นมี:
+ก่อนรัน `npm install` ต้องให้ไฟล์ที่จำเป็นครบถ้วน:
 
 #### ไฟล์การตั้งค่า
 
@@ -34,7 +34,7 @@
 }
 ```
 
-**`vite.config.js`** - Vite configuration:
+**`vite.config.js`** - การตั้งค่า Vite:
 
 ```javascript
 import { defineConfig } from "vite";
@@ -48,7 +48,7 @@ export default defineConfig({
 
 #### ไฟল์ HTML
 
-**`index.html`** - HTML template:
+**`index.html`** - แม่แบบ HTML:
 
 ```html
 <!doctype html>
@@ -65,7 +65,7 @@ export default defineConfig({
 </html>
 ```
 
-#### ไฟล์ React Source
+#### ไฟล์ต้นฉบับ React
 
 **`src/main.jsx`** - Entry point:
 
@@ -118,7 +118,7 @@ dist-ssr
 *.local
 ```
 
-✅ **หลังจากสร้างไฟล์ทั้งหมดแล้ว ค่อยไป step ถัดไป**
+✅ **หลังจากสร้างไฟล์ทั้งหมดแล้ว ค่อยไปยัง step ถัดไป**
 
 ### 1. ติดตั้ง Dependencies
 
@@ -154,20 +154,67 @@ npm run build
 npm run preview
 ```
 
-### 5. Deploy ไป GitHub Pages
+### 5. สร้าง GitHub Actions Workflow (สำหรับ Auto Deploy)
+
+สร้างไฟล์ `.github/workflows/deploy.yml` เพื่อให้ GitHub Actions ทำการ build & deploy อัตโนมัติ:
+
+```yaml
+name: Deploy to GitHub Pages
+
+on:
+  push:
+    branches: ["main", "master"]
+  pull_request:
+    branches: ["main", "master"]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - uses: actions/setup-node@v3
+        with:
+          node-version: "18"
+          cache: "npm"
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Build
+        run: npm run build
+
+      - name: Deploy to GitHub Pages
+        uses: peaceiris/actions-gh-pages@v3
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: ./dist
+```
+
+### 6. Deploy ไป GitHub Pages
 
 1. **Commit และ Push เปลี่ยนแปลง:**
 
 ```bash
 git add .
-git commit -m "Your commit message"
+git commit -m "Setup Vite React with GitHub Pages deployment"
 git push origin main
 ```
 
-2. **GitHub Actions จะ trigger สำเร็จ:**
+2. **GitHub Actions จะ trigger อัตโนมัติ:**
+   - ไปที่ GitHub Repository → **Actions** tab เพื่อดูการ build
    - GitHub Actions จะ build project
    - Deploy ไปยัง GitHub Pages อัตโนมัติ
-   - ตรวจสอบที่ `https://username.github.io/test-ci-cd/`
+
+3. **ตั้งค่า GitHub Pages:**
+   - ไปที่ **Settings** → **Pages**
+   - ตรวจสอบว่า Source เป็น "Deploy from a branch"
+   - Branch ควรเป็น `gh-pages` (auto สร้างจาก workflow)
+   - Folder ควรเป็น `/ (root)`
+
+4. **ตรวจสอบผลลัพธ์:**
+   - รอ 1-2 นาทีให้ GitHub deploy เสร็จ
+   - เข้าไปที่ `https://username.github.io/test-ci-cd/`
+   - ควรเห็น "Hello CI/CD" แสดงขึ้นมา
 
 ---
 
@@ -204,7 +251,7 @@ test-ci-cd/
 
 ### `src/main.jsx`
 
-- Entry point ของ React application
+- จุดเริ่มต้นของแอปพลิเคชัน React
 
 ### `src/App.jsx`
 
@@ -230,7 +277,7 @@ git --version
 
 ---
 
-## Tips & Troubleshooting
+## เคล็ดลับและการแก้ไขปัญหา
 
 ### ถ้า dev server ไม่เริ่มที่พอร์ต 5173
 
@@ -277,7 +324,7 @@ npm install axios
 npm install zustand  # State management
 ```
 
-### Enable ESLint:
+### เปิดใช้งาน ESLint:
 
 ```bash
 npm install --save-dev eslint eslint-plugin-react
@@ -285,7 +332,7 @@ npm install --save-dev eslint eslint-plugin-react
 
 ---
 
-## Resources
+## แหล่งอ้างอิง
 
 - [Vite Documentation](https://vitejs.dev/)
 - [React Documentation](https://react.dev/)
