@@ -46,7 +46,7 @@ export default defineConfig({
 });
 ```
 
-#### ไฟল์ HTML
+#### ไฟล์ HTML
 
 **`index.html`** - แม่แบบ HTML:
 
